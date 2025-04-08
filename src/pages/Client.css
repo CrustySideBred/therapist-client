@@ -1,85 +1,141 @@
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    background-color: #f3f2ed;
-    min-height: 100vh;
-}
-
-
-.app-header {
-    background-color: #a3b184; /* Light gray background, change as needed */
-    padding: 1rem 2rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    width: 100%;
-}
-
-.navigation-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+/* Client.css */
+.client-container {
     max-width: 1200px;
     margin: 0 auto;
-    background-color: #a3b184;
-    padding: 0 2rem;
-}
-
-.nav-left, .nav-right {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+  
+  .client-header {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 30px;
+  }
+  
+  .client-form {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
     display: flex;
-    gap: 1.5rem; 
-    flex: 1; 
-    justify-content: center;
-}
-
-.nav-center {
-    flex: 1; 
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+  
+  .client-input {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    flex: 1 1 200px;
+  }
+  
+  .client-form-buttons {
+    display: flex;
+    gap: 10px;
+    flex: 1 1 100%;
+  }
+  
+  .client-button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+  }
+  
+  .create-button {
+    background-color: #27ae60;
+    color: white;
+  }
+  
+  .create-button:hover {
+    background-color: #2ecc71;
+  }
+  
+  .update-button {
+    background-color: #3498db;
+    color: white;
+  }
+  
+  .update-button:hover {
+    background-color: #2980b9;
+  }
+  
+  .cancel-button {
+    background-color: #e74c3c;
+    color: white;
+  }
+  
+  .cancel-button:hover {
+    background-color: #c0392b;
+  }
+  
+  .edit-button {
+    background-color: #f39c12;
+    color: white;
+  }
+  
+  .edit-button:hover {
+    background-color: #e67e22;
+  }
+  
+  .delete-button {
+    background-color: #e74c3c;
+    color: white;
+  }
+  
+  .delete-button:hover {
+    background-color: #c0392b;
+  }
+  
+  .client-display {
+    margin-top: 20px;
+  }
+  
+  .client-list-header {
+    color: #2c3e50;
+    margin-bottom: 20px;
+  }
+  
+  .client-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .client-table th,
+  .client-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .client-table th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+  }
+  
+  .client-table tr:hover {
+    background-color: #f5f5f5;
+  }
+  
+  .client-regularity.weekly {
+    color: #27ae60;
+    font-weight: bold;
+  }
+  
+  .client-regularity.monthly {
+    color: #3498db;
+    font-weight: bold;
+  }
+  
+  .client-actions {
+    display: flex;
+    gap: 5px;
+  }
+  
+  .client-empty {
     text-align: center;
-}
-
-.navigation-bar a {
-    text-decoration: none;
-    color: #333; 
-    font-weight: 700;
-    font-size: 1.2rem;
-    transition: color 0.3s ease;
-    padding: 0.5rem 0;
-}
-
-.navigation-bar a:hover {
-    color: #588157; 
-}
-
-.home-link {
-    text-decoration: none;
-    color: inherit;
-}
-
-.app-title {
-    font-size: 1.5rem;
-    color: #333; 
-    margin: 0;
-    white-space: nowrap; 
-}
-
-.main-content {
-    max-width: 1200px;
-    margin: 2rem auto;
-    padding: 0 2rem;
-}
-
-
-.home-container {
-    text-align: center;
-    padding: 2rem;
-    margin-top: 2rem;
-}
-
-.home-container h1 {
-    font-size: 2.5rem;
-    color: #3a5a40;
-    margin-bottom: 1rem;
-}
+    color: #7f8c8d;
+    padding: 20px;
+  }
