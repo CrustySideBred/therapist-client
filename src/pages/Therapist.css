@@ -1,11 +1,10 @@
-/* Therapist.css */
+
 .therapist-page {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
   }
-  
-  /* Reuse the same header styles from Home.css */
+
   .therapist-page .app-header {
     background-color: #a3b184;
     padding: 1rem 2rem;
@@ -23,7 +22,6 @@
     padding: 0 2rem;
   }
   
-  /* Keep all the navigation styles consistent */
   .therapist-page .nav-left,
   .therapist-page .nav-right {
     display: flex;
@@ -57,7 +55,7 @@
     white-space: nowrap;
   }
   
-  /* Therapist-specific content styles */
+
   .therapist-page .main-content {
     flex: 1;
     max-width: 1200px;
@@ -78,6 +76,3 @@
     text-align: center;
     font-size: 2rem;
   }
-  
-  /* Add your existing therapist form and table styles here */
-  /* ... */
