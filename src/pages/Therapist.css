@@ -1,78 +1,151 @@
+.therapist-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
 
-.therapist-page {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-  }
+.therapist-header {
+  text-align: center;
+  color: #2c3e50;
+  margin-bottom: 30px;
+}
 
-  .therapist-page .app-header {
-    background-color: #a3b184;
-    padding: 1rem 2rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    width: 100%;
-  }
-  
-  .therapist-page .navigation-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    max-width: 1200px;
-    margin: 0 auto;
-    background-color: #a3b184;
-    padding: 0 2rem;
-  }
-  
-  .therapist-page .nav-left,
-  .therapist-page .nav-right {
-    display: flex;
-    gap: 1.5rem;
-    flex: 1;
-    justify-content: center;
-  }
-  
-  .therapist-page .nav-center {
-    flex: 1;
-    text-align: center;
-  }
-  
-  .therapist-page .navigation-bar a {
-    text-decoration: none;
-    color: #333;
-    font-weight: 700;
-    font-size: 1.2rem;
-    transition: color 0.3s ease;
-    padding: 0.5rem 0;
-  }
-  
-  .therapist-page .navigation-bar a:hover {
-    color: #588157;
-  }
-  
-  .therapist-page .app-title {
-    font-size: 1.5rem;
-    color: #333;
-    margin: 0;
-    white-space: nowrap;
-  }
-  
+.therapist-editing {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 30px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
 
-  .therapist-page .main-content {
-    flex: 1;
-    max-width: 1200px;
-    margin: 2rem auto;
-    padding: 0 2rem;
-  }
-  
-  .therapist-container {
-    background-color: white;
-    border-radius: 8px;
-    padding: 2rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  .page-title {
-    color: #3a5a40;
-    margin-bottom: 2rem;
-    text-align: center;
-    font-size: 2rem;
-  }
+.therapist-input {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  flex: 1 1 200px;
+}
+
+.therapist-form-buttons {
+  display: flex;
+  gap: 10px;
+  flex: 1 1 100%;
+}
+
+.therapist-button {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s;
+}
+
+.create-button {
+  background-color: #27ae60;
+  color: white;
+}
+
+.create-button:hover {
+  background-color: #2ecc71;
+}
+
+.update-button {
+  background-color: #3498db;
+  color: white;
+}
+
+.update-button:hover {
+  background-color: #2980b9;
+}
+
+.cancel-button {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.cancel-button:hover {
+  background-color: #c0392b;
+}
+
+.edit-button {
+  background-color: #f39c12;
+  color: white;
+}
+
+.edit-button:hover {
+  background-color: #e67e22;
+}
+
+.delete-button {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.delete-button:hover {
+  background-color: #c0392b;
+}
+
+.therapist-display {
+  margin-top: 20px;
+}
+
+.therapist-list-header {
+  color: #2c3e50;
+  margin-bottom: 20px;
+}
+
+.therapist-item {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.therapist-name {
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #2c3e50;
+  margin-bottom: 10px;
+}
+
+.therapist-email, 
+.therapist-location, 
+.therapist-experience {
+  margin-bottom: 8px;
+  color: #34495e;
+}
+
+.therapist-availability {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+.available {
+  background-color: #d5f5e3;
+  color: #27ae60;
+}
+
+.not-available {
+  background-color: #fadbd8;
+  color: #e74c3c;
+}
+
+.therapist-action {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.therapist-empty {
+  text-align: center;
+  color: #7f8c8d;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+}

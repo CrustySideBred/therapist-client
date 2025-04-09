@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './Client.css'; // Assuming you'll create a corresponding CSS file
+import './Client.css'; 
 
-const Therapist = () => {
-  //client variables
+const Client = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
