@@ -131,6 +131,7 @@
   .client-actions {
     display: flex;
     gap: 5px;
+    justify-content: center;
   }
   
   .client-empty {
