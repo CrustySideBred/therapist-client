@@ -15,7 +15,7 @@ const Client = () => {
   //fetching info from backend
   const fetchClients = async () => {
     try{
-        const response = await axios.get('http://localhost:3001/api/therapists');
+        const response = await axios.get('http://localhost:3001/api/clients');
         setClients(response.data);
     }
     catch (error) {
