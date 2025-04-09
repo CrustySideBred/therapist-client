@@ -10,14 +10,14 @@ app.use(cors()); // Enable CORS
 app.use(express.json()); // Parse JSON requests
 
 // Import routes
-const artistRoutes = require('./routes/therapistRoutes');
-const songRoutes = require('./routes/clientRoutes');
-const albumRoutes = require('./routes/sessionRoutes');
+const therapistRoutes = require('./routes/therapistRoutes');
+const clientRoutes = require('./routes/clientRoutes');
+const sessionRoutes = require('./routes/sessionRoutes');
 
 // Use routes
 app.use('/api/therapist', therapistRoutes);
 app.use('/api/client', clientRoutes);
-app.use('/api/sesson', sessonRoutes);
+app.use('/api/sesson', sessionRoutes);
 
 // Start the server
 const PORT = process.env.PORT || 3001;
