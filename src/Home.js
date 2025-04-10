@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
-import './Home.css'; // Changed from Home.css to App.css since this is your main component
+import './Home.css'; 
 import Client from './pages/Client';
 import Session from './pages/Session';
 import Therapist from './pages/Therapist';

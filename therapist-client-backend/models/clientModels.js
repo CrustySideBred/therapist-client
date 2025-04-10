@@ -9,19 +9,26 @@ const Client = sequelize.define('Client', {
   },
   name: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: false,
+    validate: {
+      notEmpty: true
+    }
   },
   email: {
     type: DataTypes.STRING,
     allowNull: false,
     unique: true,
     validate: {
-      isEmail: true
+      isEmail: true,
+      notEmpty: true
     }
   },
   phone: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: false,
+    validate: {
+      notEmpty: true
+    }
   },
   regularity: {
     type: DataTypes.ENUM('WEEKLY', 'MONTHLY'),
@@ -29,7 +36,8 @@ const Client = sequelize.define('Client', {
     defaultValue: 'WEEKLY'
   }
 }, {
-  timestamps: true
+  timestamps: true,
+  tableName: 'Clients' 
 });
 
 module.exports = Client;

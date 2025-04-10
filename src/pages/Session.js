@@ -34,13 +34,11 @@ const Session = () => {
     e.preventDefault();
     setError('');
 
-    // Validate inputs
     if (!therapistId || !clientId || !date) {
       setError('Please select a therapist, client, and date');
       return;
     }
 
-    // Format date for backend (YYYY-MM-DD)
     const formattedDate = new Date(date).toISOString().split('T')[0];
 
     const sessionData = {
@@ -70,7 +68,7 @@ const Session = () => {
     setTherapistId(session.therapistId.toString());
     setClientId(session.clientId.toString());
     setNotes(session.notes || '');
-    // Convert backend date to local date format for input
+ 
     setDate(session.date.split('T')[0]);
     setLength(session.length.toString());
   };

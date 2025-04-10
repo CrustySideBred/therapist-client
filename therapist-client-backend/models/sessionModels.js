@@ -42,7 +42,7 @@ const Session = sequelize.define('Session', {
   }
 }, {
   timestamps: true,
-  tableName: 'Sessions' // Explicitly set to match your table name
+  tableName: 'Sessions' 
 });
 
 module.exports = Session;

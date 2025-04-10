@@ -8,7 +8,7 @@ const Client = () => {
   const [phone, setPhone] = useState('');
   const [regularity, setRegularity] = useState('WEEKLY');
 
-  //Client data + editing variables
+  //Client data 
   const [clients, setClients] = useState([]);
   const [editingClient, setEditingClient] = useState(null);
 

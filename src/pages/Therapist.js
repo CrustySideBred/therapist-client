@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './Therapist.css'; // Assuming you'll create a corresponding CSS file
+import './Therapist.css'; 
 
 const Therapist = () => {
-  //therapists fields
+
   const [title, setTitle] = useState('');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -15,7 +15,7 @@ const Therapist = () => {
   const [therapists, setTherapists] = useState([]);
   const [editingTherapist, setEditingTherapist] = useState(null);
 
-  //fetching info from backend
+  //fetching info 
   const fetchTherapists = async () => {
     try{
         const response = await axios.get('http://localhost:3001/api/therapists');
@@ -40,15 +40,14 @@ const Therapist = () => {
         name,
         email,
         location,
-        yearsOfPractice: Number(yearsOfPractice), // Ensure it's a number
+        yearsOfPractice: Number(yearsOfPractice), 
         availability
       };
   
-      console.log('Sending data:', newTherapist); // Debug log
+      console.log('Sending data:', newTherapist); 
       
       const response = await axios.post('http://localhost:3001/api/therapists', newTherapist);
-      console.log('Response:', response.data); // Debug log
-      
+      console.log('Response:', response.data); 
       fetchTherapists();
       resetForm();
     } catch (error) {
@@ -130,7 +129,7 @@ const Therapist = () => {
             onChange={(e) => setTitle(e.target.value)}
             className = "therapist-input"
             >
-            <option value="">Select Title</option>
+            <option value="">Select Title</option> 
             <option value="Dr.">Dr.</option>
             <option value="Prof.">Prof.</option>
             <option value="Mr.">Mr.</option>
