@@ -29,20 +29,36 @@ const Therapist = () => {
   //creating a new therapist
   const createTherapist = async () => {
     try {
-        const newTherapist = {
-            title,
-            name,
-            email,
-            location,
-            yearsOfPractice,
-            availability
-        };
-        await axios.post('http://localhost:3001/api/therapists', newTherapist);
-        fetchTherapists();
-        resetForm();
-    }
-    catch (error){
-        console.error('Error creating a new therapist:',error);
+      // Validate required fields
+      if (!title || !name || !email || !location || !yearsOfPractice) {
+        alert('Please fill all required fields');
+        return;
+      }
+  
+      const newTherapist = {
+        title,
+        name,
+        email,
+        location,
+        yearsOfPractice: Number(yearsOfPractice), // Ensure it's a number
+        availability
+      };
+  
+      console.log('Sending data:', newTherapist); // Debug log
+      
+      const response = await axios.post('http://localhost:3001/api/therapists', newTherapist);
+      console.log('Response:', response.data); // Debug log
+      
+      fetchTherapists();
+      resetForm();
+    } catch (error) {
+      console.error('Error creating therapist:', error);
+      if (error.response) {
+        console.error('Server responded with:', error.response.data);
+        alert(`Error: ${error.response.data.message || 'Failed to create therapist'}`);
+      } else {
+        alert('Network error - please check console for details');
+      }
     }
   };
 

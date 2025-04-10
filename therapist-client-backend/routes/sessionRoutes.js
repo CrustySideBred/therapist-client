@@ -7,16 +7,16 @@ const {
   deleteSession
 } = require('../controllers/sessionController');
 
-// GET all sessions (with populated therapist and client)
+
 router.get('/', getAllSessions);
 
-// POST new session
+
 router.post('/', createSession);
 
-// UPDATE session
+
 router.put('/:id', updateSession);
 
-// DELETE session
+
 router.delete('/:id', deleteSession);
 
 module.exports = router;

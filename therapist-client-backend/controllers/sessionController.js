@@ -1,61 +1,124 @@
-const Session = require('../models/Session');
+const db = require('../db');
 
-// Get ALL sessions
 exports.getAllSessions = async (req, res) => {
   try {
-    const sessions = await Session.find()
-      .populate('therapistId', 'name title') // Include therapist details
-      .populate('clientId', 'name'); // Include client details
+    const [sessions] = await db.query(`
+      SELECT s.*, 
+        t.title as therapist_title, 
+        t.name as therapist_name,
+        c.name as client_name
+      FROM Sessions s
+      LEFT JOIN Therapists t ON s.therapistId = t.id
+      LEFT JOIN Clients c ON s.clientId = c.id
+    `);
     res.json(sessions);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error('Error fetching sessions:', err);
+    res.status(500).json({ 
+      message: 'Failed to fetch sessions',
+      error: err.message 
+    });
   }
 };
 
-// Create session
 exports.createSession = async (req, res) => {
   const { therapistId, clientId, notes, date, length } = req.body;
-  
-  try {
-    const newSession = new Session({
-      therapistId,
-      clientId,
-      notes,
-      date,
-      length
+
+  // Validate input
+  if (!therapistId || !clientId || !date) {
+    return res.status(400).json({ 
+      message: 'Therapist ID, client ID, and date are required' 
     });
-    const savedSession = await newSession.save();
-    res.status(201).json(savedSession);
+  }
+
+  try {
+    const [result] = await db.query(
+      'INSERT INTO Sessions (therapistId, clientId, notes, date, length) VALUES (?, ?, ?, ?, ?)',
+      [therapistId, clientId, notes, date, length || 60]
+    );
+
+    const [newSession] = await db.query(`
+      SELECT s.*, 
+        t.title as therapist_title, 
+        t.name as therapist_name,
+        c.name as client_name
+      FROM Sessions s
+      LEFT JOIN Therapists t ON s.therapistId = t.id
+      LEFT JOIN Clients c ON s.clientId = c.id
+      WHERE s.id = ?
+    `, [result.insertId]);
+    
+    res.status(201).json(newSession[0]);
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    console.error('Error creating session:', err);
+    
+    if (err.code === 'ER_NO_REFERENCED_ROW_2') {
+      return res.status(400).json({ 
+        message: 'Invalid therapist or client ID' 
+      });
+    }
+    
+    res.status(500).json({ 
+      message: 'Failed to create session',
+      error: err.message 
+    });
   }
 };
 
-// Update session
 exports.updateSession = async (req, res) => {
   const { id } = req.params;
   const { therapistId, clientId, notes, date, length } = req.body;
 
   try {
-    const updatedSession = await Session.findByIdAndUpdate(
-      id,
-      { therapistId, clientId, notes, date, length },
-      { new: true }
+    await db.query(
+      'UPDATE Sessions SET therapistId=?, clientId=?, notes=?, date=?, length=? WHERE id=?',
+      [therapistId, clientId, notes, date, length, id]
     );
-    res.json(updatedSession);
+
+    const [updatedSession] = await db.query(`
+      SELECT s.*, 
+        t.title as therapist_title, 
+        t.name as therapist_name,
+        c.name as client_name
+      FROM Sessions s
+      LEFT JOIN Therapists t ON s.therapistId = t.id
+      LEFT JOIN Clients c ON s.clientId = c.id
+      WHERE s.id = ?
+    `, [id]);
+      
+    if (!updatedSession.length) {
+      return res.status(404).json({ message: 'Session not found' });
+    }
+    
+    res.json(updatedSession[0]);
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    console.error('Error updating session:', err);
+    res.status(500).json({ 
+      message: 'Failed to update session',
+      error: err.message 
+    });
   }
 };
 
-// Delete session
 exports.deleteSession = async (req, res) => {
   const { id } = req.params;
-
+  
   try {
-    await Session.findByIdAndDelete(id);
+    const [result] = await db.query(
+      'DELETE FROM Sessions WHERE id = ?',
+      [id]
+    );
+    
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Session not found' });
+    }
+    
     res.json({ message: 'Session deleted successfully' });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error('Error deleting session:', err);
+    res.status(500).json({ 
+      message: 'Failed to delete session',
+      error: err.message 
+    });
   }
 };
