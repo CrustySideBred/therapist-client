@@ -1,48 +1,49 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
-const Session = sequelize.define('Session', {
+const Therapist = sequelize.define('Therapist', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true
   },
-  therapistId: {
-    type: DataTypes.INTEGER,
+  title: {
+    type: DataTypes.STRING,
     allowNull: false,
-    references: {
-      model: 'Therapists',
-      key: 'id'
+    validate: {
+      isIn: [['Dr.', 'Prof.', 'Mr.', 'Mrs.', 'Ms.']]
     }
   },
-  clientId: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    references: {
-      model: 'Clients',
-      key: 'id'
-    }
-  },
-  notes: {
-    type: DataTypes.TEXT,
-    allowNull: true
-  },
-  date: {
-    type: DataTypes.DATE,
+  name: {
+    type: DataTypes.STRING,
     allowNull: false
   },
-  length: {
+  email: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true,
+    validate: {
+      isEmail: true
+    }
+  },
+  location: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  yearsOfPractice: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    defaultValue: 60,
     validate: {
-      min: 30,
-      max: 120
+      min: 0
     }
+  },
+  availability: {
+    type: DataTypes.ENUM('TAKING CLIENTS', 'NOT TAKING CLIENTS'),
+    allowNull: false,
+    defaultValue: 'TAKING CLIENTS'
   }
 }, {
-  timestamps: true,
-  tableName: 'Sessions' 
+  timestamps: true
 });
 
-module.exports = Session;
+module.exports = Therapist;

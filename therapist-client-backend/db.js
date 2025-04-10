@@ -1,4 +1,4 @@
-const mysql = require('mysql2/promise'); 
+const mysql = require('mysql2/promise'); // Using promise-based version
 
 const pool = mysql.createPool({
   host: 'webcourse.cs.nuim.ie',
@@ -11,7 +11,7 @@ const pool = mysql.createPool({
   queueLimit: 0
 });
 
-
+// Test connection
 pool.getConnection()
   .then(conn => {
     console.log(' Connected to MySQL database');

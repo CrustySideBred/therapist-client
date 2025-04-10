@@ -1,6 +1,6 @@
 const db = require('../db');
 
-
+// Get all sessions with therapist and client details
 const getAllSessions = async (req, res) => {
   try {
     const [sessions] = await db.query(`
@@ -21,6 +21,7 @@ const getAllSessions = async (req, res) => {
   }
 };
 
+// Get single session by ID
 const getSessionById = async (req, res) => {
   try {
     const [results] = await db.query(`
@@ -45,10 +46,11 @@ const getSessionById = async (req, res) => {
   }
 };
 
-
+// Create new session
 const createSession = async (req, res) => {
   const { therapistId, clientId, notes, date, length } = req.body;
-
+  
+  // Validate required fields
   if (!therapistId || !clientId || !date) {
     return res.status(400).json({ error: 'Therapist ID, client ID, and date are required' });
   }
@@ -59,7 +61,7 @@ const createSession = async (req, res) => {
       [therapistId, clientId, notes, date, length || 60]
     );
     
-
+    // Return the newly created session with joined data
     const [newSession] = await db.query(`
       SELECT 
         s.id, s.notes, s.date, s.length,
@@ -82,7 +84,7 @@ const createSession = async (req, res) => {
   }
 };
 
-
+// Update session
 const updateSession = async (req, res) => {
   const { therapistId, clientId, notes, date, length } = req.body;
   
@@ -96,7 +98,7 @@ const updateSession = async (req, res) => {
       return res.status(404).json({ error: 'Session not found' });
     }
     
-    
+    // Return the updated session with joined data
     const [updatedSession] = await db.query(`
       SELECT 
         s.id, s.notes, s.date, s.length,
@@ -119,7 +121,7 @@ const updateSession = async (req, res) => {
   }
 };
 
-
+// Delete session
 const deleteSession = async (req, res) => {
   try {
     const [result] = await db.query('DELETE FROM Sessions WHERE id = ?', [req.params.id]);
@@ -135,7 +137,7 @@ const deleteSession = async (req, res) => {
   }
 };
 
-
+// Get therapists for dropdown
 const getTherapistsForDropdown = async (req, res) => {
   try {
     const [therapists] = await db.query(
@@ -148,6 +150,7 @@ const getTherapistsForDropdown = async (req, res) => {
   }
 };
 
+// Get clients for dropdown
 const getClientsForDropdown = async (req, res) => {
   try {
     const [clients] = await db.query(

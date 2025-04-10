@@ -1,6 +1,6 @@
 const db = require('../db');
 
-
+// Get all therapists
 const getAllTherapists = async (req, res) => {
   try {
     const [therapists] = await db.query('SELECT * FROM Therapists');
@@ -11,7 +11,7 @@ const getAllTherapists = async (req, res) => {
   }
 };
 
-
+// Get single therapist by ID
 const getTherapistById = async (req, res) => {
   try {
     const [results] = await db.query('SELECT * FROM Therapists WHERE id = ?', [req.params.id]);
@@ -25,6 +25,7 @@ const getTherapistById = async (req, res) => {
   }
 };
 
+// Create new therapist
 const createTherapist = async (req, res) => {
   const { title, name, email, location, yearsOfPractice, availability } = req.body;
   
@@ -49,7 +50,7 @@ const createTherapist = async (req, res) => {
   }
 };
 
-
+// Update therapist
 const updateTherapist = async (req, res) => {
   const { title, name, email, location, yearsOfPractice, availability } = req.body;
   
@@ -71,7 +72,7 @@ const updateTherapist = async (req, res) => {
   }
 };
 
-
+// Delete therapist
 const deleteTherapist = async (req, res) => {
   try {
     const [result] = await db.query('DELETE FROM Therapists WHERE id = ?', [req.params.id]);

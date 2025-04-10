@@ -1,6 +1,6 @@
-const { Client } = require('../models/Client');
 const db = require('../db');
 
+// Get all clients
 const getAllClients = async (req, res) => {
   try {
     const [clients] = await db.query('SELECT * FROM Clients');
@@ -11,6 +11,7 @@ const getAllClients = async (req, res) => {
   }
 };
 
+// Get single client by ID
 const getClientById = async (req, res) => {
   try {
     const [results] = await db.query('SELECT * FROM Clients WHERE id = ?', [req.params.id]);
@@ -24,13 +25,12 @@ const getClientById = async (req, res) => {
   }
 };
 
-
+// Create new client
 const createClient = async (req, res) => {
   const { name, email, phone, regularity } = req.body;
   
-
   if (!name || !email || !phone) {
-    return res.status(400).json({ error: 'Name, email, and phone are required' });
+    return res.status(400).json({ error: 'Missing required fields' });
   }
 
   try {
@@ -38,7 +38,7 @@ const createClient = async (req, res) => {
       'INSERT INTO Clients (name, email, phone, regularity) VALUES (?, ?, ?, ?)',
       [name, email, phone, regularity || 'WEEKLY']
     );
-
+    
     const [newClient] = await db.query('SELECT * FROM Clients WHERE id = ?', [result.insertId]);
     res.status(201).json(newClient[0]);
   } catch (err) {
@@ -50,7 +50,7 @@ const createClient = async (req, res) => {
   }
 };
 
-
+// Update client
 const updateClient = async (req, res) => {
   const { name, email, phone, regularity } = req.body;
   
@@ -64,19 +64,15 @@ const updateClient = async (req, res) => {
       return res.status(404).json({ error: 'Client not found' });
     }
     
- 
     const [updatedClient] = await db.query('SELECT * FROM Clients WHERE id = ?', [req.params.id]);
     res.json(updatedClient[0]);
   } catch (err) {
     console.error('Error updating client:', err);
-    if (err.code === 'ER_DUP_ENTRY') {
-      return res.status(400).json({ error: 'Email already exists' });
-    }
     res.status(500).json({ error: 'Error updating client' });
   }
 };
 
-
+// Delete client
 const deleteClient = async (req, res) => {
   try {
     const [result] = await db.query('DELETE FROM Clients WHERE id = ?', [req.params.id]);
