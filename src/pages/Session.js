@@ -3,20 +3,17 @@ import axios from 'axios';
 import './Session.css';
 
 const Session = () => {
-
   const [therapistId, setTherapistId] = useState('');
   const [clientId, setClientId] = useState('');
   const [notes, setNotes] = useState('');
   const [date, setDate] = useState('');
-  const [length, setLength] = useState(60); 
+  const [length, setLength] = useState(60);
   const [therapists, setTherapists] = useState([]);
   const [clients, setClients] = useState([]);
-
-
   const [sessions, setSessions] = useState([]);
   const [editingSession, setEditingSession] = useState(null);
+  const [error, setError] = useState('');
 
-  
   const fetchData = async () => {
     try {
       const [sessionsRes, therapistsRes, clientsRes] = await Promise.all([
@@ -29,72 +26,74 @@ const Session = () => {
       setClients(clientsRes.data);
     } catch (error) {
       console.error('Error fetching data:', error);
+      setError('Failed to load data. Please try again.');
     }
   };
 
-  
-  const createSession = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+
+    // Validate inputs
+    if (!therapistId || !clientId || !date) {
+      setError('Please select a therapist, client, and date');
+      return;
+    }
+
+    // Format date for backend (YYYY-MM-DD)
+    const formattedDate = new Date(date).toISOString().split('T')[0];
+
+    const sessionData = {
+      therapistId: parseInt(therapistId),
+      clientId: parseInt(clientId),
+      notes,
+      date: formattedDate,
+      length: parseInt(length)
+    };
+
     try {
-      const newSession = {
-        therapistId,
-        clientId,
-        notes,
-        date,
-        length
-      };
-      await axios.post('http://localhost:3001/api/sessions', newSession);
+      if (editingSession) {
+        await axios.put(`http://localhost:3001/api/sessions/${editingSession.id}`, sessionData);
+      } else {
+        await axios.post('http://localhost:3001/api/sessions', sessionData);
+      }
       fetchData();
       resetForm();
     } catch (error) {
-      console.error('Error creating session:', error);
+      console.error('Error saving session:', error);
+      setError(error.response?.data?.error || 'Failed to save session. Please try again.');
     }
   };
 
- 
-  const updateSession = async () => {
-    try {
-      const updatedSession = {
-        therapistId,
-        clientId,
-        notes,
-        date,
-        length
-      };
-      await axios.put(`http://localhost:3001/api/sessions/${editingSession.id}`, updatedSession);
-      fetchData();
-      setEditingSession(null);
-      resetForm();
-    } catch (error) {
-      console.error('Error updating session:', error);
-    }
-  };
-
-  
   const startEditing = (session) => {
     setEditingSession(session);
-    setTherapistId(session.therapistId);
-    setClientId(session.clientId);
-    setNotes(session.notes);
-    setDate(session.date.split('T')[0]); 
-    setLength(session.length);
+    setTherapistId(session.therapistId.toString());
+    setClientId(session.clientId.toString());
+    setNotes(session.notes || '');
+    // Convert backend date to local date format for input
+    setDate(session.date.split('T')[0]);
+    setLength(session.length.toString());
   };
 
-  
   const resetForm = () => {
     setTherapistId('');
     setClientId('');
     setNotes('');
     setDate('');
-    setLength(60);
+    setLength('60');
+    setEditingSession(null);
+    setError('');
   };
 
-  
   const deleteSession = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this session?')) return;
+    
     try {
       await axios.delete(`http://localhost:3001/api/sessions/${id}`);
       fetchData();
     } catch (error) {
       console.error('Error deleting session:', error);
+      setError('Failed to delete session. Please try again.');
     }
   };
 
@@ -102,13 +101,11 @@ const Session = () => {
     fetchData();
   }, []);
 
-  
   const getTherapistName = (id) => {
     const therapist = therapists.find(t => t.id === id);
     return therapist ? `${therapist.title} ${therapist.name}` : 'Unknown Therapist';
   };
 
-  
   const getClientName = (id) => {
     const client = clients.find(c => c.id === id);
     return client ? client.name : 'Unknown Client';
@@ -118,7 +115,9 @@ const Session = () => {
     <div className="session-container">
       <h1 className="session-header">Session Management</h1>
 
-      <div className="session-editing">
+      {error && <div className="error-message">{error}</div>}
+
+      <form onSubmit={handleSubmit} className="session-editing">
         <select
           value={therapistId}
           onChange={(e) => setTherapistId(e.target.value)}
@@ -174,27 +173,21 @@ const Session = () => {
           rows="3"
         />
 
-        {editingSession ? (
-          <div className="session-form-buttons">
-            <button onClick={updateSession} className="session-button update-button">
-              Update Session
-            </button>
+        <div className="session-form-buttons">
+          <button type="submit" className={`session-button ${editingSession ? 'update-button' : 'create-button'}`}>
+            {editingSession ? 'Update Session' : 'Add Session'}
+          </button>
+          {editingSession && (
             <button
-              onClick={() => {
-                setEditingSession(null);
-                resetForm();
-              }}
+              type="button"
+              onClick={resetForm}
               className="session-button cancel-button"
             >
               Cancel
             </button>
-          </div>
-        ) : (
-          <button onClick={createSession} className="session-button create-button">
-            Add Session
-          </button>
-        )}
-      </div>
+          )}
+        </div>
+      </form>
 
       <div className="session-display">
         <h2 className="session-list-header">Session Directory</h2>

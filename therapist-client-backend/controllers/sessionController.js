@@ -1,34 +1,58 @@
 const db = require('../db');
 
-exports.getAllSessions = async (req, res) => {
+// Get all sessions with therapist and client details
+const getAllSessions = async (req, res) => {
   try {
     const [sessions] = await db.query(`
-      SELECT s.*, 
-        t.title as therapist_title, 
-        t.name as therapist_name,
-        c.name as client_name
+      SELECT 
+        s.id, s.notes, s.date, s.length,
+        s.createdAt, s.updatedAt,
+        t.id as therapistId, t.title as therapistTitle, t.name as therapistName,
+        c.id as clientId, c.name as clientName
       FROM Sessions s
-      LEFT JOIN Therapists t ON s.therapistId = t.id
-      LEFT JOIN Clients c ON s.clientId = c.id
+      JOIN Therapists t ON s.therapistId = t.id
+      JOIN Clients c ON s.clientId = c.id
+      ORDER BY s.date DESC
     `);
     res.json(sessions);
   } catch (err) {
     console.error('Error fetching sessions:', err);
-    res.status(500).json({ 
-      message: 'Failed to fetch sessions',
-      error: err.message 
-    });
+    res.status(500).json({ error: 'Error fetching sessions' });
   }
 };
 
-exports.createSession = async (req, res) => {
-  const { therapistId, clientId, notes, date, length } = req.body;
+// Get single session by ID
+const getSessionById = async (req, res) => {
+  try {
+    const [results] = await db.query(`
+      SELECT 
+        s.id, s.notes, s.date, s.length,
+        s.createdAt, s.updatedAt,
+        t.id as therapistId, t.title as therapistTitle, t.name as therapistName,
+        c.id as clientId, c.name as clientName
+      FROM Sessions s
+      JOIN Therapists t ON s.therapistId = t.id
+      JOIN Clients c ON s.clientId = c.id
+      WHERE s.id = ?
+    `, [req.params.id]);
+    
+    if (results.length === 0) {
+      return res.status(404).json({ error: 'Session not found' });
+    }
+    res.json(results[0]);
+  } catch (err) {
+    console.error('Error fetching session:', err);
+    res.status(500).json({ error: 'Error fetching session' });
+  }
+};
 
-  // Validate input
+// Create new session
+const createSession = async (req, res) => {
+  const { therapistId, clientId, notes, date, length } = req.body;
+  
+  // Validate required fields
   if (!therapistId || !clientId || !date) {
-    return res.status(400).json({ 
-      message: 'Therapist ID, client ID, and date are required' 
-    });
+    return res.status(400).json({ error: 'Therapist ID, client ID, and date are required' });
   }
 
   try {
@@ -36,89 +60,116 @@ exports.createSession = async (req, res) => {
       'INSERT INTO Sessions (therapistId, clientId, notes, date, length) VALUES (?, ?, ?, ?, ?)',
       [therapistId, clientId, notes, date, length || 60]
     );
-
+    
+    // Return the newly created session with joined data
     const [newSession] = await db.query(`
-      SELECT s.*, 
-        t.title as therapist_title, 
-        t.name as therapist_name,
-        c.name as client_name
+      SELECT 
+        s.id, s.notes, s.date, s.length,
+        s.createdAt, s.updatedAt,
+        t.id as therapistId, t.title as therapistTitle, t.name as therapistName,
+        c.id as clientId, c.name as clientName
       FROM Sessions s
-      LEFT JOIN Therapists t ON s.therapistId = t.id
-      LEFT JOIN Clients c ON s.clientId = c.id
+      JOIN Therapists t ON s.therapistId = t.id
+      JOIN Clients c ON s.clientId = c.id
       WHERE s.id = ?
     `, [result.insertId]);
     
     res.status(201).json(newSession[0]);
   } catch (err) {
     console.error('Error creating session:', err);
-    
     if (err.code === 'ER_NO_REFERENCED_ROW_2') {
-      return res.status(400).json({ 
-        message: 'Invalid therapist or client ID' 
-      });
+      return res.status(400).json({ error: 'Invalid therapist or client ID' });
     }
-    
-    res.status(500).json({ 
-      message: 'Failed to create session',
-      error: err.message 
-    });
+    res.status(500).json({ error: 'Error creating session' });
   }
 };
 
-exports.updateSession = async (req, res) => {
-  const { id } = req.params;
+// Update session
+const updateSession = async (req, res) => {
   const { therapistId, clientId, notes, date, length } = req.body;
-
+  
   try {
-    await db.query(
-      'UPDATE Sessions SET therapistId=?, clientId=?, notes=?, date=?, length=? WHERE id=?',
-      [therapistId, clientId, notes, date, length, id]
+    const [result] = await db.query(
+      'UPDATE Sessions SET therapistId = ?, clientId = ?, notes = ?, date = ?, length = ? WHERE id = ?',
+      [therapistId, clientId, notes, date, length, req.params.id]
     );
-
-    const [updatedSession] = await db.query(`
-      SELECT s.*, 
-        t.title as therapist_title, 
-        t.name as therapist_name,
-        c.name as client_name
-      FROM Sessions s
-      LEFT JOIN Therapists t ON s.therapistId = t.id
-      LEFT JOIN Clients c ON s.clientId = c.id
-      WHERE s.id = ?
-    `, [id]);
-      
-    if (!updatedSession.length) {
-      return res.status(404).json({ message: 'Session not found' });
+    
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: 'Session not found' });
     }
+    
+    // Return the updated session with joined data
+    const [updatedSession] = await db.query(`
+      SELECT 
+        s.id, s.notes, s.date, s.length,
+        s.createdAt, s.updatedAt,
+        t.id as therapistId, t.title as therapistTitle, t.name as therapistName,
+        c.id as clientId, c.name as clientName
+      FROM Sessions s
+      JOIN Therapists t ON s.therapistId = t.id
+      JOIN Clients c ON s.clientId = c.id
+      WHERE s.id = ?
+    `, [req.params.id]);
     
     res.json(updatedSession[0]);
   } catch (err) {
     console.error('Error updating session:', err);
-    res.status(500).json({ 
-      message: 'Failed to update session',
-      error: err.message 
-    });
+    if (err.code === 'ER_NO_REFERENCED_ROW_2') {
+      return res.status(400).json({ error: 'Invalid therapist or client ID' });
+    }
+    res.status(500).json({ error: 'Error updating session' });
   }
 };
 
-exports.deleteSession = async (req, res) => {
-  const { id } = req.params;
-  
+// Delete session
+const deleteSession = async (req, res) => {
   try {
-    const [result] = await db.query(
-      'DELETE FROM Sessions WHERE id = ?',
-      [id]
-    );
+    const [result] = await db.query('DELETE FROM Sessions WHERE id = ?', [req.params.id]);
     
     if (result.affectedRows === 0) {
-      return res.status(404).json({ message: 'Session not found' });
+      return res.status(404).json({ error: 'Session not found' });
     }
     
-    res.json({ message: 'Session deleted successfully' });
+    res.status(204).end();
   } catch (err) {
     console.error('Error deleting session:', err);
-    res.status(500).json({ 
-      message: 'Failed to delete session',
-      error: err.message 
-    });
+    res.status(500).json({ error: 'Error deleting session' });
   }
+};
+
+// Get therapists for dropdown
+const getTherapistsForDropdown = async (req, res) => {
+  try {
+    const [therapists] = await db.query(
+      'SELECT id, title, name FROM Therapists ORDER BY name'
+    );
+    res.json(therapists);
+  } catch (err) {
+    console.error('Error fetching therapists:', err);
+    res.status(500).json({ error: 'Error fetching therapists' });
+  }
+};
+
+// Get clients for dropdown
+const getClientsForDropdown = async (req, res) => {
+  try {
+    const [clients] = await db.query(
+      'SELECT id, name FROM Clients ORDER BY name'
+    );
+    res.json(clients);
+  } catch (err) {
+    console.error('Error fetching clients:', err);
+    res.status(500).json({ error: 'Error fetching clients' });
+  }
+};
+
+
+module.exports = {
+  getAllSessions,
+  getSessionById,
+  createSession,
+  updateSession,
+  deleteSession,
+  getTherapistsForDropdown,
+  getClientsForDropdown
 };

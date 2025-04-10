@@ -7,6 +7,22 @@ const Session = sequelize.define('Session', {
     primaryKey: true,
     autoIncrement: true
   },
+  therapistId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'Therapists',
+      key: 'id'
+    }
+  },
+  clientId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'Clients',
+      key: 'id'
+    }
+  },
   notes: {
     type: DataTypes.TEXT,
     allowNull: true
@@ -20,21 +36,13 @@ const Session = sequelize.define('Session', {
     allowNull: false,
     defaultValue: 60,
     validate: {
-      isIn: [[30, 45, 60, 90]]
+      min: 30,
+      max: 120
     }
   }
 }, {
-  timestamps: true
+  timestamps: true,
+  tableName: 'Sessions' // Explicitly set to match your table name
 });
-
-// Define associations
-const Therapist = require('./Therapist');
-const Client = require('./Client');
-
-Session.belongsTo(Therapist, { foreignKey: 'therapistId' });
-Session.belongsTo(Client, { foreignKey: 'clientId' });
-
-Therapist.hasMany(Session, { foreignKey: 'therapistId' });
-Client.hasMany(Session, { foreignKey: 'clientId' });
 
 module.exports = Session;
